@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PTFIDE Scanning</title>
+    </head>
+    <body>
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        Science
+                    </th>
+                    <th>
+                        Science - reference
+                    </th>
+                    <th>
+                        SDSS DR10
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in catalog %}
+                <tr>
+                    <td>
+                        <img width="200" height="200" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/new.png">
+                    </td>
+                    <td>
+                        <img width="200" height="200" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/sub.png">
+                    </td>
+                    <td>
+                        <a href="http://skyserver.sdss3.org/dr10/en/tools/chart/navi.aspx?ra={{ row.ra }}&dec={{ row.dec }}" target="_blank">
+                            <img width="200" height="200" src="http://skyservice.pha.jhu.edu/DR10/ImgCutout/getjpeg.aspx?ra={{ row.ra }}&dec={{ row.dec }}&scale={{ 0.5 }}&width=200&height=200&opt=">
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
