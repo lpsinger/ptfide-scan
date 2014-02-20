@@ -19,12 +19,23 @@
                 stroke: #6f6;
                 stroke-width: 2px;
             }
+            tr.candidate td, tr.candidate th {
+                border-top: 1px solid #ccc;
+                padding-top: 1em;
+                padding-bottom: 1em;
+            }
+            tbody th {
+                text-align: right;
+            }
         </style>
     </head>
     <body>
         <table>
             <thead>
                 <tr>
+                    <th colspan="2">
+                        Candidate
+                    </th>
                     <th>
                         Science
                     </th>
@@ -38,8 +49,14 @@
             </thead>
             <tbody>
                 {% for row in catalog %}
-                <tr>
+                <tr class="candidate">
+                    <th>
+                        Exposure
+                    </th>
                     <td>
+                        {{ row.exposure }}
+                    </td>
+                    <td rowspan="4">
                         <div>
                             <svg width="202" height="202" class="reticule">
                                 <g transform="translate(101, 101)">
@@ -49,7 +66,7 @@
                             <img width="202" height="202" class="cutout" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/new.png">
                         </div>
                     </td>
-                    <td>
+                    <td rowspan="4">
                         <div>
                             <svg width="202" height="202" class="reticule">
                                 <g transform="translate(101, 101)">
@@ -59,18 +76,30 @@
                             <img width="202" height="202" class="cutout" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/sub.png">
                         </div>
                     </td>
-                    <td>
+                    <td rowspan="4">
                         <div>
-                            <svg width="202" height="202" class="reticule">
-                                <g transform="translate(101, 101)">
-                                    <path d="M 0 15 V 40 M 0 -15 V -40 M 15 0 H 40 M -15 0 H -40"/>
-                                </g>
-                            </svg>
                             <a href="http://skyserver.sdss3.org/dr10/en/tools/chart/navi.aspx?ra={{ row.ra }}&dec={{ row.dec }}" target="_blank">
+                                <svg width="202" height="202" class="reticule">
+                                    <g transform="translate(101, 101)">
+                                        <path d="M 0 15 V 40 M 0 -15 V -40 M 15 0 H 40 M -15 0 H -40"/>
+                                    </g>
+                                </svg>
                                 <img width="202" height="202" src="http://skyservice.pha.jhu.edu/DR10/ImgCutout/getjpeg.aspx?ra={{ row.ra }}&dec={{ row.dec }}&scale={{ 0.5 }}&width=202&height=202&opt=">
                             </a>
                         </div>
                     </td>
+                </tr>
+                <tr>
+                    <th valign=top>Chip</th>
+                    <td valign=top>{{ row.chip }}</td>
+                </tr>
+                <tr>
+                    <th valign=top>PSF Mag</th>
+                    <td valign=top>{{ row.magpsf }}</td>
+                </tr>
+                <tr>
+                    <th valign=top>SNR</th>
+                    <td valign=top>{{ row.snrpsf }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
