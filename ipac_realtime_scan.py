@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import division
 from flask import Flask, make_response, render_template
 try:
     from functools import lru_cache
@@ -16,6 +17,9 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
 import math
+
+# PIL imports
+import PIL.Image
 
 app = Flask(__name__)
 mirrordir = 'ptf.nersc.gov/project/deepsky/ptfvet/fermi'
@@ -88,10 +92,10 @@ def plot_cutout(fits, i0, j0, width=101):
 
     imax, jmax = fits[0].data.shape
 
-    i1ind = max(0, np.floor(i1))
-    i2ind = min(imax, np.ceil(i2) + 1)
-    j1ind = max(0, np.floor(j1))
-    j2ind = min(jmax, np.ceil(j2) + 1)
+    i1ind = max(0, int(np.floor(i1)))
+    i2ind = min(imax, int(np.ceil(i2) + 1))
+    j1ind = max(0, int(np.floor(j1)))
+    j2ind = min(jmax, int(np.ceil(j2) + 1))
 
     imgdata = fits[0].data[i1ind:i2ind, j1ind:j2ind]
 
@@ -131,18 +135,60 @@ def plot_cutout(fits, i0, j0, width=101):
     response.mimetype = 'image/png'
     return response
 
+def plot_cutout_pil(fits, i0, j0, width=101):
+    # Round image center to nearest pixel
+    i0 = int(round(i0))
+    j0 = int(round(j0))
+
+    # Get dimensions of full FITS image
+    imax, jmax = fits[0].data.shape
+
+    # Compute sub-range of cutout, performing
+    # bounds checking
+    i1 = max(0, i0 - width // 2)
+    i1_ = i1 - (i0 - width // 2)
+    i2 = min(imax, i0 + (width + 1) // 2)
+    i2_ = i2 - (i0 - width // 2)
+    j1 = max(0, j0 - width // 2)
+    j1_ = j1 - (j0 - width // 2)
+    j2 = min(jmax, j0 + (width + 1) // 2)
+    j2_ = j2 - (j0 - width // 2)
+
+    # Get cutout from FITS image
+    cutout = fits[0].data[i1:i2, j1:j2]
+
+    # Get flattened view of cutout
+    cutout_flattened = cutout.flatten()
+
+    # Determine appropriate data range using sigma clipping
+    loc = np.mean(astropy.stats.sigma_clip(cutout_flattened))
+    scale = np.std(astropy.stats.sigma_clip(cutout_flattened))
+
+    # Intialize image buffer
+    data = np.empty((width, width), dtype=np.uint8)
+    data[:, :] = 128
+
+    data[i1_:i2_, j1_:j2_] = np.clip(np.round(255/4 * ((cutout - loc) / scale + 1)), 0, 255).astype(np.uint8)
+
+    # Generate PNG output
+    output = StringIO.StringIO()
+    PIL.Image.fromarray(data[:, ::-1], 'L').save(output, 'png')
+    response = make_response(output.getvalue())
+    response.mimetype = 'image/png'
+    return response
+
 @app.route('/<int:exposure>/<int:chip>/<int:candidate>/sub.png')
 def sub_png(exposure, chip, candidate):
     # Look up row in PSF fit catalog
     psf_row = psf_sub_catalog(exposure, chip)[candidate]
 
-    i0 = round(psf_row['ypos'])
-    j0 = round(psf_row['xpos'])
+    i0 = psf_row['ypos']
+    j0 = psf_row['xpos']
 
     # Open FITS file
     fits = sub_fits(exposure, chip)
 
-    return plot_cutout(fits, i0, j0)
+    return plot_cutout_pil(fits, i0, j0)
 
 
 @app.route('/<int:exposure>/<int:chip>/<int:candidate>/new.png')
@@ -150,15 +196,15 @@ def new_png(exposure, chip, candidate):
     # Look up row in PSF fit catalog
     psf_row = psf_sub_catalog(exposure, chip)[candidate]
 
-    i0 = round(psf_row['ypos'])
-    j0 = round(psf_row['xpos'])
+    i0 = psf_row['ypos']
+    j0 = psf_row['xpos']
 
     # Open FITS file
     fits = new_fits(exposure, chip)
 
-    return plot_cutout(fits, i0, j0)
+    return plot_cutout_pil(fits, i0, j0)
 
 
 if __name__ == '__main__':
-    app.run(port=8888, debug=True)
+    app.run(port=8888, debug=True, threaded=True)
 
