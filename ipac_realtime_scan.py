@@ -78,6 +78,7 @@ def _find_top_sources():
 def find_top_sources():
     return astropy.table.vstack(list(_find_top_sources()))
 
+
 @app.route('/')
 def top_sources():
     catalog = find_top_sources()
