@@ -82,10 +82,6 @@ def find_top_sources():
 def top_sources():
     catalog = find_top_sources()
     catalog.sort('magpsf')
-    #table_html = '<br>'.join('<a href="{exposure}/{chip}/{candidate}/sub.png">sub image</a>'.format(exposure=row['exposure'], chip=row['chip'], candidate=row['sourceid']) for row in catalog)
-    #table_lines = catalog.pformat(html=True, max_width=np.inf, max_lines=np.inf)
-    #for table_line in table_lines:
-    #table_html = ''.join(catalog.pformat(html=True, max_width=np.inf, max_lines=np.inf))
     return render_template('index.html', catalog=catalog)
 
 
