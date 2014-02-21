@@ -56,7 +56,7 @@
                     <td>
                         {{ row.exposure }}
                     </td>
-                    <td rowspan="4">
+                    <td rowspan="6">
                         <div>
                             <svg width="202" height="202" class="reticule">
                                 <g transform="translate(101, 101)">
@@ -66,7 +66,7 @@
                             <img width="202" height="202" class="cutout" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/new.png">
                         </div>
                     </td>
-                    <td rowspan="4">
+                    <td rowspan="6">
                         <div>
                             <svg width="202" height="202" class="reticule">
                                 <g transform="translate(101, 101)">
@@ -76,7 +76,7 @@
                             <img width="202" height="202" class="cutout" src="{{ row.exposure }}/{{ row.chip }}/{{ row.sourceid }}/sub.png">
                         </div>
                     </td>
-                    <td rowspan="4">
+                    <td rowspan="6">
                         <div>
                             <a href="http://skyserver.sdss3.org/dr10/en/tools/chart/navi.aspx?ra={{ row.ra }}&dec={{ row.dec }}" target="_blank">
                                 <svg width="202" height="202" class="reticule">
@@ -94,8 +94,16 @@
                     <td valign=top>{{ row.chip }}</td>
                 </tr>
                 <tr>
+                    <th valign=top>Source ID</th>
+                    <td valign=top>{{ row.sourceid }}</td>
+                </tr>
+                <tr>
                     <th valign=top>PSF Mag</th>
                     <td valign=top>{{ row.magpsf }}</td>
+                </tr>
+                <tr>
+                    <th valign=top>Nearest source in ref.</th>
+                    <td valign=top>{{ row.dnear }}"</td>
                 </tr>
                 <tr>
                     <th valign=top>SNR</th>
