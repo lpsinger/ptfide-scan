@@ -15,8 +15,6 @@ import astropy.io.fits
 import astropy.stats
 import numpy as np
 import math
-
-# PIL imports
 import PIL.Image
 
 app = Flask(__name__)
