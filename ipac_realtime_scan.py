@@ -86,6 +86,14 @@ def top_sources():
 
 
 def plot_cutout(fits, i0, j0, width=101):
+    """Plot a cutout image from a FITS file. Set the color scale
+    automatically using sigma-clipping to extend one sigma below and three
+    sigma above the median pixel value.
+
+    The image is returned as an 8-bit grayscale PNG, with one pixel for each
+    pixel in the cutout of the FITS image. We'll add the reticule as an SVG
+    layer in the web page so that we don't need to encode color PNGs, which
+    would use more bandwidth."""
     # Round image center to nearest pixel
     i0 = int(round(i0))
     j0 = int(round(j0))
