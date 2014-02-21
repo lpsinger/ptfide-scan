@@ -67,7 +67,7 @@ def _find_top_sources():
             except ValueError:
                 continue # Yuck! skipping fields w/o sub images
             keep = catalog['nneg'] < 30
-            keep &= catalog['nneg'] != 999
+            keep &= catalog['nneg'] != -999
             keep &= catalog['dnear'] > 4
             keep &= catalog['magpsf'] < 16
             keep_catalog = catalog[keep]
