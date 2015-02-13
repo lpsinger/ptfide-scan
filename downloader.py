@@ -18,4 +18,4 @@ for row in r:
         catname = imgname.replace('_flattened.fits', '_sex.cat')
         for filename in [imgname, catname]:
             url = 'http://ptfdepot.ipac.caltech.edu/ptfdata/RealTimeProds/' + date.replace('-', '') + '/' + filename
-            subprocess.call(['wget', '-N', url])
+            subprocess.check_call(['wget', '-N', url])
